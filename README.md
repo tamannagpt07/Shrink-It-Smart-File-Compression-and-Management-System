@@ -11,10 +11,20 @@ file information, integrity checking, and duplicate file detection features.
 
 Objectives:
 1-To reduce file size using the Huffman Coding algorithm.
+
+
 2-To compress and decompress files efficiently.
+
+
 3-To check file integrity and identify possible file corruption.
+
+
 4-To detect duplicate files and avoid unnecessary storage.
+
+
 5-To display file information and compression statistics.
+
+
 6-To apply Data Structures, Object-Oriented Programming (OOP), and file handling concepts in a practical C++ project.
 
 Team Members:
