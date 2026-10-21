@@ -39,13 +39,20 @@ C++ source files of the ShrinkIt project
 
 Installation Steps:
 1-Install Visual Studio Code on your computer.
+
 2-Install and configure the GCC compiler.
+
 3-Clone or download the ShrinkIt repository from GitHub.
+
 4-Open the project folder in VS Code.
+
 5-Make sure all required source and header files are present in the project folder.
+
 6-Open the terminal in VS Code.
+
 7-Compile the project using the following command (replace filenames if required):
 g++ compression.cpp -o ShrinkIt
+
 8-Run the compiled program:
 
 Windows:
@@ -56,11 +63,17 @@ Linux/macOS:
 
 Major Features / Modules:
 1-File Compression: Compresses files using the Huffman Coding algorithm to reduce file size.
+
 2-File Decompression: Restores the original file from the compressed file.
+
 3-File Integrity Check: Checks file integrity to help identify possible corruption or unwanted changes.
+
 4-Duplicate File Detection: Helps identify duplicate files to avoid unnecessary storage.
+
 5-File Information: Displays details such as file size and other available file information.
+
 6-Compression Analysis: Shows the original size, compressed size, compression ratio, and space saved.
+
 7-Menu-Driven Interface: Provides a simple menu that allows users to select different operations.
 
 Current Project Status / Progress:
