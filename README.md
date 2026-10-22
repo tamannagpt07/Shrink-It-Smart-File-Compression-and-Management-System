@@ -5,11 +5,13 @@ It provides file compression and decompression, file information, integrity chec
 use of Data Structures, Object-Oriented Programming (OOP), and file handling to make file storage more efficient.
 
 Problem Statement:
+
 Large files require more storage space and can take longer to transfer from one device to another. Managing files efficiently and identifying duplicate or corrupted
 files can also be challenging. ShrinkIt aims to solve these problems by providing a file compression system using Huffman Coding, along with file decompression,
 file information, integrity checking, and duplicate file detection features.
 
 Objectives:
+
 1-To reduce file size using the Huffman Coding algorithm.
 
 
