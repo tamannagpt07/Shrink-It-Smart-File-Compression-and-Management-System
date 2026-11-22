@@ -1,0 +1,51 @@
+void buildCanonical(int len[], unsigned long long code[], unsigned long long first[],
+                    int cnt[], int offset[], int sorted[])
+{
+    for (int l = 0; l <= MAXLEN; l++)
+    {
+        cnt[l] = 0;
+        first[l] = 0;
+        offset[l] = 0;
+    }
+    for (int i = 0; i < 256; i++)
+    {
+        code[i] = 0;
+        if (len[i] > 0)
+            cnt[len[i]]++;
+    }
+
+    unsigned long long next[MAXLEN + 1];
+    unsigned long long c = 0;
+    for (int l = 1; l <= MAXLEN; l++)
+    {
+        c = (c + cnt[l - 1]) << 1;
+        first[l] = c;
+        next[l] = c;
+        offset[l] = offset[l - 1] + cnt[l - 1];
+    }
+
+    int placed[MAXLEN + 1];
+    for (int l = 0; l <= MAXLEN; l++)
+        placed[l] = 0;
+
+    for (int i = 0; i < 256; i++)
+    {
+        int l = len[i];
+        if (l > 0)
+        {
+            code[i] = next[l];
+            next[l]++;
+            sorted[offset[l] + placed[l]] = i;
+            placed[l]++;
+        }
+    }
+}
+
+long getFileSize(const char name[])
+{
+    ifstream file(name, ios::binary);
+    if (!file)
+        return -1;
+    file.seekg(0, ios::end);
+    return (long)file.tellg();
+}
