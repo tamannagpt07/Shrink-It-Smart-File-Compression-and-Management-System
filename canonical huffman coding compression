@@ -1,0 +1,118 @@
+void compressFile(char filename[])
+{
+    ifstream input(filename, ios::binary);
+    if (!input)
+    {
+        cout << "\nFile not found!\n";
+        return;
+    }
+
+    int freq[256] = {0};
+    char ch;
+    long originalSize = 0;
+
+    while (input.get(ch))
+    {
+        freq[(unsigned char)ch]++;
+        originalSize++;
+    }
+
+    if (originalSize == 0)
+    {
+        cout << "\nFile is empty, nothing to compress.\n";
+        return;
+    }
+
+    // Step 1: tree -> code lengths -> canonical codes
+    Node *root = buildTree(freq);
+    int len[256] = {0};
+    findLengths(root, 0, len);
+    deleteTree(root);
+
+    unsigned long long code[256], first[MAXLEN + 1];
+    int cnt[MAXLEN + 1], offset[MAXLEN + 1], sorted[256];
+    buildCanonical(len, code, first, cnt, offset, sorted);
+
+    // Step 2: header = mode, original size (4 bytes), unique-1, then (char, length) pairs
+    int unique = 0;
+    for (int i = 0; i < 256; i++)
+        if (len[i] > 0)
+            unique++;
+
+    ofstream output("compressed.bin", ios::binary);
+    output.put((char)1);                         // mode 1 = canonical Huffman
+    unsigned int size32 = (unsigned int)originalSize;
+    output.write((char*)&size32, 4);
+    output.put((char)(unique - 1));
+
+    for (int i = 0; i < 256; i++)
+    {
+        if (len[i] > 0)
+        {
+            output.put((char)i);
+            output.put((char)len[i]);
+        }
+    }
+
+    // Step 3: write the codes bit by bit (most significant bit first)
+    input.clear();
+    input.seekg(0, ios::beg);
+
+    unsigned char buffer = 0;
+    int bitCount = 0;
+
+    while (input.get(ch))
+    {
+        int c = (unsigned char)ch;
+        for (int b = len[c] - 1; b >= 0; b--)
+        {
+            buffer = buffer << 1;
+            if ((code[c] >> b) & 1)
+                buffer = buffer | 1;
+            bitCount++;
+
+            if (bitCount == 8)
+            {
+                output.put((char)buffer);
+                buffer = 0;
+                bitCount = 0;
+            }
+        }
+    }
+
+    if (bitCount > 0)
+    {
+        buffer = buffer << (8 - bitCount);
+        output.put((char)buffer);
+    }
+    output.close();
+
+    long compressedSize = getFileSize("compressed.bin");
+
+    int storedRaw = 0;
+    if (compressedSize > originalSize + 1)
+    {
+        input.clear();
+        input.seekg(0, ios::beg);
+
+        ofstream raw("compressed.bin", ios::binary);
+        raw.put((char)0);                        // mode 0 = stored as is
+        while (input.get(ch))
+            raw.put(ch);
+        raw.close();
+
+        compressedSize = getFileSize("compressed.bin");
+        storedRaw = 1;
+    }
+    input.close();
+
+    double saved = (double)(originalSize - compressedSize) / originalSize * 100;
+
+    cout << "\n===== COMPRESSION COMPLETED (canonical Huffman) =====\n";
+    cout << "Original Size   : " << originalSize << " bytes\n";
+    cout << "Compressed Size : " << compressedSize << " bytes\n";
+    cout << "Space Saved     : " << saved << " %\n";
+    cout << "Output file     : compressed.bin\n";
+    if (storedRaw)
+        cout << "Note: file is too small or too random, so it was stored as is (+1 byte).\n";
+}
